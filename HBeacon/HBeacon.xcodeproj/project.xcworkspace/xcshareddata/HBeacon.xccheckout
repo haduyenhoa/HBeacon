@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>E35DD2BB-7E3C-41B8-8BF1-21F91FC2E3A9</string>
+	<key>IDESourceControlProjectName</key>
+	<string>HBeacon</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>197923C0-DFE8-4C26-950A-137522EE7440</key>
+		<string>https://github.com/haduyenhoa/HBeacon.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>HBeacon/HBeacon.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>197923C0-DFE8-4C26-950A-137522EE7440</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/haduyenhoa/HBeacon.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>197923C0-DFE8-4C26-950A-137522EE7440</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>197923C0-DFE8-4C26-950A-137522EE7440</string>
+			<key>IDESourceControlWCCName</key>
+			<string>HBeacon</string>
+		</dict>
+	</array>
+</dict>
+</plist>
