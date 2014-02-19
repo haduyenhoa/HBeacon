@@ -13,16 +13,23 @@
     NSMutableArray *_listBeaconsInRange;
 }
 
-@property (nonatomic) NSUUID    *deviceUUID;
-@property (nonatomic) NSString  *deviceIdentifier;
-@property (nonatomic) CLBeaconMajorValue       major;
-@property (nonatomic) CLBeaconMinorValue       minor;
+@property (nonatomic) NSUUID    *uuid1;
+@property (nonatomic) NSString  *identifier1;
+@property (nonatomic) NSUUID    *uuid2;
+@property (nonatomic) NSString  *identifier2;
+@property (nonatomic) CLBeaconMajorValue       major1;
+@property (nonatomic) CLBeaconMinorValue       minor1;
 
-@property (nonatomic) NSMutableDictionary *myBTData;
+@property (nonatomic) CLBeaconMajorValue       major2;
+@property (nonatomic) CLBeaconMinorValue       minor2;
+
+@property (nonatomic) NSMutableDictionary *myBTData1;
 
 @property (nonatomic) CBPeripheralManager *myBTManager;
 @property (nonatomic) CLLocationManager *locationManager;
-@property (nonatomic) CLBeaconRegion *myRegion; //a region to manager all beacons in range ! This can be also a Beacon (with proximityUUID & Identifier ????
+@property (nonatomic) CLBeaconRegion *myRegion1; //a region to manager all beacons in range ! This can be also a Beacon (with proximityUUID & Identifier ????
+
+@property (nonatomic) CLBeaconRegion *myRegion2;
 
 
 
@@ -35,12 +42,39 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    self.deviceUUID = [[NSUUID alloc] initWithUUIDString:@"A77A1B68-49A7-4DBF-914C-760D07FBB87E"];
-    self.deviceIdentifier = @"aidentifier2";
-    self.major = 2;
-    self.minor  = 1;
+    self.uuid1 = [[NSUUID alloc] initWithUUIDString:@"00000000-0000-0000-0000-DLXLK5LKFCM8"];
+    self.identifier1 = @"iPadMini";
+    self.major1 = 1;
+    self.minor1  = 1;
+    
+    self.uuid2 = [[NSUUID alloc] initWithUUIDString:@"00000000-0000-0000-0000-DQGJ13JQDTD2"];
+    self.identifier2 = @"iPhoneGiang";
+    self.major2 = 2;
+    self.minor2  = 1;
+    
+    NSLog(@"serial: %@",[self stringToHex:@"F18KPQMHDTWF"]);
+    
     
     _listBeaconsInRange = [[NSMutableArray alloc] init];
+}
+
+- (NSString *) stringToHex:(NSString *)str
+{
+    NSUInteger len = [str length];
+    unichar *chars = malloc(len * sizeof(unichar));
+    [str getCharacters:chars];
+    
+    NSMutableString *hexString = [[NSMutableString alloc] init];
+    
+    for(NSUInteger i = 0; i < len; i++ )
+    {
+        // [hexString [NSString stringWithFormat:@"%02x", chars[i]]]; //previous input
+        
+        [hexString appendFormat:@"%02x", chars[i]]; //EDITED PER COMMENT BELOW
+    }
+    free(chars);
+    
+    return hexString ;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -102,13 +136,25 @@
 
 -(void)createBeacon {
     NSLog(@"%s",__FUNCTION__);
-    if (self.myRegion) {
-        NSLog(@"beacon has already be created");
-        return;
+    if (self.myRegion1) {
+        NSLog(@"beacon 1 has already be created");
+
+    } else {
+        self.myRegion1 = [[CLBeaconRegion alloc] initWithProximityUUID:self.uuid1 major:self.major1 minor:self.minor1 identifier:self.identifier1];
+        self.myRegion1.notifyEntryStateOnDisplay = YES;
     }
     
-    self.myRegion = [[CLBeaconRegion alloc] initWithProximityUUID:self.deviceUUID major:self.major minor:self.minor identifier:self.deviceIdentifier];
-    self.myRegion.notifyEntryStateOnDisplay = YES;
+    if (self.myRegion2) {
+        NSLog(@"beacon 2 has already be created");
+        
+    } else {
+        self.myRegion2 = [[CLBeaconRegion alloc] initWithProximityUUID:self.uuid2 major:self.major2 minor:self.minor2 identifier:self.identifier2];
+        self.myRegion2.notifyEntryStateOnDisplay = YES;
+    }
+
+    
+    
+    
 //    self.myRegion.notifyOnEntry = YES; //not notify when enter
 //    self.myRegion.notifyOnExit = NO; //not notify when exit
 }
@@ -131,7 +177,8 @@
         return;
     }
     
-    self.myBTData = [self.myRegion peripheralDataWithMeasuredPower:nil];
+    self.myBTData1 = [self.myRegion2 peripheralDataWithMeasuredPower:nil];
+    
     self.myBTManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
 }
 #pragma -
@@ -156,12 +203,14 @@
     
     [self createBeacon];
     
-    [self.locationManager startMonitoringForRegion:self.myRegion];
+    [self.locationManager startMonitoringForRegion:self.myRegion1];
+    [self.locationManager startMonitoringForRegion:self.myRegion2];
 }
 
 -(void)stopMonitor {
     NSLog(@"%s",__FUNCTION__);
-    [self.locationManager stopMonitoringForRegion:self.myRegion];
+    [self.locationManager stopMonitoringForRegion:self.myRegion1];
+    [self.locationManager stopMonitoringForRegion:self.myRegion2];
 }
 
 #pragma -
@@ -186,7 +235,7 @@
         NSString *major = [NSString stringWithFormat:@"%@", foundBeacon.major];
         NSString *minor = [NSString stringWithFormat:@"%@", foundBeacon.minor];
         NSString *accuracy = [NSString stringWithFormat:@"%f", foundBeacon.accuracy];
-        NSString *rssi = [NSString stringWithFormat:@"%d", foundBeacon.rssi];
+        NSString *rssi = [NSString stringWithFormat:@"%ld", (long)foundBeacon.rssi];
         NSString *identifier = @"unknown";
         CLBeaconRegion *aBeaconRegion = (CLBeaconRegion*)region;
         if (aBeaconRegion && aBeaconRegion.identifier) {
@@ -194,7 +243,7 @@
         }
         
         //    self.statusLabel.text = [NSString stringWithFormat:@"%@ - %@:%@ - %@",uuid, major, minor, proximity];
-        NSLog(@"%@ - %@ - %@ - %@ - %@", identifier, major, minor, accuracy, rssi);
+        NSLog(@"%@ - %@ - %@ - %@ - %@ - %@", identifier, major, minor, accuracy, rssi, uuid);
     }
     
 }
@@ -251,17 +300,26 @@
 -(void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
     NSLog(@"%s",__FUNCTION__);
     NSString *stateString = nil;
+    CLBeaconRegion *bReagion = (CLBeaconRegion*)region;
     switch (state) {
         case CLRegionStateInside:
         {
             stateString = @"inside";
-            [self startRanging];
+            if ([bReagion.proximityUUID isEqual:self.uuid1]) {
+                [self startRanging:self.myRegion1];
+            } else {
+                [self startRanging:self.myRegion2];
+            }
         }
             break;
         case CLRegionStateOutside:
         {
             stateString = @"outside";
-            [self stopRanging];
+            if ([bReagion.proximityUUID isEqual:self.uuid1]) {
+                [self stopRanging:self.myRegion1];
+            } else {
+                [self stopRanging:self.myRegion2];
+            }
         }
             break;
         case CLRegionStateUnknown:
@@ -307,7 +365,7 @@
 
     if (self.myBTManager.state == CBCentralManagerStatePoweredOn && !self.myBTManager.isAdvertising) {
         NSLog(@"start broadcast now");
-        [self.myBTManager startAdvertising:self.myBTData];
+        [self.myBTManager startAdvertising:self.myBTData1];
     }
 }
 
@@ -319,7 +377,7 @@
 #pragma -
 
 #pragma mark Range (diffuser)
--(void)startRanging {
+-(void)startRanging:(CLBeaconRegion*)region {
     NSLog(@"%s",__FUNCTION__);
     [self createLocationManager];
     
@@ -330,24 +388,13 @@
         return;
     }
     
-    if (self.locationManager.rangedRegions.count > 0) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.lblMessage.text = @"Didn't turn on ranging: Ranging already on.";
-        });
-        return;
-    }
-    
     [self createBeacon]; //create beacon if need
-    [self.locationManager startRangingBeaconsInRegion:self.myRegion];
+    
+    [self.locationManager startRangingBeaconsInRegion:region];
 }
 
--(void)stopRanging {
-    if (self.locationManager.rangedRegions.count == 0) {
-        NSLog(@"Didn't turn off ranging: Ranging already off.");
-        return;
-    }
-    
-    [self.locationManager stopRangingBeaconsInRegion:self.myRegion];
+-(void)stopRanging:(CLBeaconRegion*)region {
+    [self.locationManager stopRangingBeaconsInRegion:region];
     
     NSLog(@"Turned off ranging.");
 }
@@ -367,7 +414,7 @@
         self.lblMessage.text = @"Broadcasting...";
         
         // Start broadcasting
-        [self.myBTManager startAdvertising:self.myBTData];
+        [self.myBTManager startAdvertising:self.myBTData1];
     }
     else if (peripheral.state == CBPeripheralManagerStatePoweredOff)
     {
