@@ -8,10 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@import CoreLocation;
-@import CoreBluetooth;
 
-@interface MainViewController : UIViewController <CLLocationManagerDelegate,CBPeripheralManagerDelegate>
+
+@interface MainViewController : UIViewController 
 
 @property (nonatomic) IBOutlet UITableView *tblBeaconsInRange;
 
