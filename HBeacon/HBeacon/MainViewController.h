@@ -11,7 +11,7 @@
 #import "BeaconBroadcastAgent.h"
 #import "BeaconReceiverAgent.h"
 
-@interface MainViewController : UIViewController 
+@interface MainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, BeaconReceiverAgentDelegate>
 
 @property (nonatomic) IBOutlet UITableView *tblBeaconsInRange;
 

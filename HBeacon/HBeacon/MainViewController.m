@@ -55,6 +55,7 @@
     if (sender == self.swReceiver) {
         if (self.shareBRA == nil) {
             self.shareBRA = [BeaconReceiverAgent shareBA];
+            self.shareBRA.delegate = self;
         }
         [self.shareBRA enableReceiver:self.swReceiver.on];
     } else if (sender == self.swBroadcast) {
@@ -72,16 +73,34 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark BeaconReceiverAgentDelegate 
+-(void)beaconsUpdated {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tblBeaconsInRange reloadData];
+    });
+}
 
+-(void)newMessage:(NSString *)msg {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.lblMessage.text = msg;
+    });
+}
+#pragma -
 
+#pragma mark Table View
+-(int)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
 
+-(int)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_shareBRA getListBeaconInRange] == nil ? 0 : [_shareBRA getListBeaconInRange].count;
+}
 
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *aCell = [tableView dequeueReusableCellWithIdentifier:@"BeaconCellId"];
+    
+    return aCell;
+}
 
-
-
-
-
-
-
-
+#pragma -
 @end

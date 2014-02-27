@@ -222,6 +222,12 @@ static BeaconReceiverAgent *_shareBA = nil;
             [self.locationManager startRangingBeaconsInRegion:(CLBeaconRegion*)regionEntered];
         }
     }
+
+    [_listBeaconInRange addObject:region];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
+        [self.delegate beaconsUpdated];
+    }
     
     [self sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region];
 }
@@ -234,6 +240,12 @@ static BeaconReceiverAgent *_shareBA = nil;
         if (regionExited) {
             [self.locationManager stopRangingBeaconsInRegion:(CLBeaconRegion*)regionExited];
         }
+    }
+    
+    [_listBeaconInRange removeObject:region];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
+        [self.delegate beaconsUpdated];
     }
 }
 

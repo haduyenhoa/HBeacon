@@ -11,7 +11,7 @@
 @import CoreLocation;
 @import CoreBluetooth;
 
-@protocol BeaconAgentDelegate <NSObject>
+@protocol BeaconReceiverAgentDelegate <NSObject>
 
 -(void)newMessage:(NSString*)msg;
 
@@ -25,7 +25,7 @@
 
 +(BeaconReceiverAgent*) shareBA;
 
-@property (nonatomic) id<BeaconAgentDelegate> delegate;
+@property (nonatomic) id<BeaconReceiverAgentDelegate> delegate;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
 -(NSArray*)getListBeaconInRange;
