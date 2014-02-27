@@ -94,28 +94,80 @@ static BeaconReceiverAgent *_shareBA = nil;
 
 
 -(void)locationManager:(CLLocationManager *)manager didRangeBeacons:(NSArray *)beacons inRegion:(CLBeaconRegion *)region {
-    //    NSLog(@"%s",__FUNCTION__);
-    //    NSLog(@"manager: %@",manager);
-    //    NSLog(@"beacon in range: %d",beacons.count);
-    //    NSLog(@"region %@", region == self.myRegion ? @"ME" : region.identifier);
+    NSLog(@"%s",__FUNCTION__);
+    NSLog(@"manager: %@",manager);
+    NSLog(@"beacon in range: %d",beacons.count);
+    NSLog(@"region: %@", region.identifier);
     
-    for (CLBeacon *foundBeacon in beacons) {
-        // You can retrieve the beacon data from its properties
-        NSString *uuid = foundBeacon.proximityUUID.UUIDString;
-        NSString *major = [NSString stringWithFormat:@"%@", foundBeacon.major];
-        NSString *minor = [NSString stringWithFormat:@"%@", foundBeacon.minor];
-        NSString *accuracy = [NSString stringWithFormat:@"%0.2f", foundBeacon.accuracy];
-        NSString *rssi = [NSString stringWithFormat:@"%ld", (long)foundBeacon.rssi];
-        NSString *identifier = @"unknown";
-        CLBeaconRegion *aBeaconRegion = (CLBeaconRegion*)region;
-        if (aBeaconRegion && aBeaconRegion.identifier) {
-            identifier = aBeaconRegion.identifier;
+    CLBeacon *nearestBeacon = nil;
+    if (beacons && beacons.count > 0) {
+        NSMutableArray *immediateBeacons = [[NSMutableArray alloc] init];
+        NSMutableArray *nearBeacons = [[NSMutableArray alloc] init];
+        NSMutableArray *farBeacons = [[NSMutableArray alloc] init];
+        
+        for (CLBeacon *foundBeacon in beacons) {
+            if (foundBeacon.proximity == CLProximityImmediate) {
+                [immediateBeacons addObject:foundBeacon];
+            } else if (foundBeacon.proximity == CLProximityNear) {
+                [nearBeacons addObject:foundBeacon];
+            } else if (foundBeacon.proximity == CLProximityFar) {
+                [farBeacons addObject:foundBeacon];
+            }
         }
         
-        //    self.statusLabel.text = [NSString stringWithFormat:@"%@ - %@:%@ - %@",uuid, major, minor, proximity];
-        NSLog(@"%@ - %@ - %@ - %@ m - %@ - %@", identifier, major, minor, accuracy, rssi, uuid);
+        for (CLBeacon *aBeacon in immediateBeacons) {
+            if (nearestBeacon == nil) {
+                nearestBeacon = aBeacon;
+            } else if (aBeacon.accuracy < nearestBeacon.accuracy) {
+                nearestBeacon = aBeacon;
+            }
+        }
+        
+        if (nearestBeacon == nil) {
+            for (CLBeacon *aBeacon in nearBeacons) {
+                if (nearestBeacon == nil) {
+                    nearestBeacon = aBeacon;
+                } else if (aBeacon.accuracy < nearestBeacon.accuracy) {
+                    nearestBeacon = aBeacon;
+                }
+            }
+            
+            if (nearestBeacon == nil) {
+                for (CLBeacon *aBeacon in farBeacons) {
+                    if (nearestBeacon == nil) {
+                        nearestBeacon = aBeacon;
+                    } else if (aBeacon.accuracy < nearestBeacon.accuracy) {
+                        nearestBeacon = aBeacon;
+                    }
+                }
+                
+                if (nearestBeacon) {
+                    NSLog(@"found nearest beacon in far list");
+                }
+            } else {
+                NSLog(@"found nearest beacon in near list");
+            }
+        } else {
+            NSLog(@"found nearest beacon in immediate list");
+        }
     }
     
+    if (nearestBeacon == nil) {
+        NSLog(@"take first beacon in list");
+        nearestBeacon = [beacons firstObject];
+    }
+    
+    if (nearestBeacon) {
+        // You can retrieve the beacon data from its properties
+        NSString *uuid = nearestBeacon.proximityUUID.UUIDString;
+        NSString *major = [NSString stringWithFormat:@"%@", nearestBeacon.major];
+        NSString *minor = [NSString stringWithFormat:@"%@", nearestBeacon.minor];
+        NSString *accuracy = [NSString stringWithFormat:@"%0.2f", nearestBeacon.accuracy];
+        NSString *rssi = [NSString stringWithFormat:@"%ld", (long)nearestBeacon.rssi];
+        NSString *identifier = region.identifier;
+        
+        NSLog(@"%@ - %@ - %@ - %@ m - %@ - %@", identifier, major, minor, accuracy, rssi, uuid);
+    }
 }
 
 //check if we can monitoring or not
