@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 
 #import <CoreLocation/CLBeaconRegion.h>
-@interface HBeacon : NSObject
+@interface HBeaconRegion : NSObject
 
-@property (nonatomic) NSString *identifier;
-@property (nonatomic) CLBeaconRegion *beaconReagion;
+@property (nonatomic) NSArray *beaconsInRegion;
+@property (nonatomic, strong) CLBeaconRegion *beaconReagion;
+
+-(CLBeacon*)getNearestBeacon;
 
 @end

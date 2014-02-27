@@ -24,8 +24,10 @@
 		ED97FAF618B4053500558F21 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ED97FAF418B4053500558F21 /* InfoPlist.strings */; };
 		ED97FAF818B4053500558F21 /* HBeaconTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ED97FAF718B4053500558F21 /* HBeaconTests.m */; };
 		EDB1F1C818B6CAAD008F6511 /* BeaconReceiverAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1C718B6CAAD008F6511 /* BeaconReceiverAgent.m */; };
-		EDB1F1CB18B6D4EB008F6511 /* HBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1CA18B6D4EB008F6511 /* HBeacon.m */; };
+		EDB1F1CB18B6D4EB008F6511 /* HBeaconRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1CA18B6D4EB008F6511 /* HBeaconRegion.m */; };
 		EDB1F1CE18B6E3C3008F6511 /* BeaconBroadcastAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1CD18B6E3C3008F6511 /* BeaconBroadcastAgent.m */; };
+		EDBC4AB918BFF2290047C0EA /* RegionPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDBC4AB818BFF2290047C0EA /* RegionPopupViewController.m */; };
+		EDBC4ABB18BFF3C20047C0EA /* lebonmarche.html in Resources */ = {isa = PBXBuildFile; fileRef = EDBC4ABA18BFF3C20047C0EA /* lebonmarche.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,10 +65,13 @@
 		ED97FAF718B4053500558F21 /* HBeaconTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HBeaconTests.m; sourceTree = "<group>"; };
 		EDB1F1C618B6CAAD008F6511 /* BeaconReceiverAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeaconReceiverAgent.h; sourceTree = "<group>"; };
 		EDB1F1C718B6CAAD008F6511 /* BeaconReceiverAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeaconReceiverAgent.m; sourceTree = "<group>"; };
-		EDB1F1C918B6D4EB008F6511 /* HBeacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBeacon.h; sourceTree = "<group>"; };
-		EDB1F1CA18B6D4EB008F6511 /* HBeacon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBeacon.m; sourceTree = "<group>"; };
+		EDB1F1C918B6D4EB008F6511 /* HBeaconRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBeaconRegion.h; sourceTree = "<group>"; };
+		EDB1F1CA18B6D4EB008F6511 /* HBeaconRegion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBeaconRegion.m; sourceTree = "<group>"; };
 		EDB1F1CC18B6E3C3008F6511 /* BeaconBroadcastAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeaconBroadcastAgent.h; sourceTree = "<group>"; };
 		EDB1F1CD18B6E3C3008F6511 /* BeaconBroadcastAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeaconBroadcastAgent.m; sourceTree = "<group>"; };
+		EDBC4AB718BFF2290047C0EA /* RegionPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionPopupViewController.h; sourceTree = "<group>"; };
+		EDBC4AB818BFF2290047C0EA /* RegionPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegionPopupViewController.m; sourceTree = "<group>"; };
+		EDBC4ABA18BFF3C20047C0EA /* lebonmarche.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = lebonmarche.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +101,7 @@
 		ED97FABA18B4053500558F21 = {
 			isa = PBXGroup;
 			children = (
+				EDBC4ABA18BFF3C20047C0EA /* lebonmarche.html */,
 				ED97FACC18B4053500558F21 /* HBeacon */,
 				ED97FAF118B4053500558F21 /* HBeaconTests */,
 				ED97FAC518B4053500558F21 /* Frameworks */,
@@ -136,12 +142,14 @@
 				ED97FAE218B4053500558F21 /* ManagerViewController.m */,
 				EDB1F1C618B6CAAD008F6511 /* BeaconReceiverAgent.h */,
 				EDB1F1C718B6CAAD008F6511 /* BeaconReceiverAgent.m */,
-				EDB1F1C918B6D4EB008F6511 /* HBeacon.h */,
-				EDB1F1CA18B6D4EB008F6511 /* HBeacon.m */,
+				EDB1F1C918B6D4EB008F6511 /* HBeaconRegion.h */,
+				EDB1F1CA18B6D4EB008F6511 /* HBeaconRegion.m */,
 				ED97FAE418B4053500558F21 /* Images.xcassets */,
 				ED97FACD18B4053500558F21 /* Supporting Files */,
 				EDB1F1CC18B6E3C3008F6511 /* BeaconBroadcastAgent.h */,
 				EDB1F1CD18B6E3C3008F6511 /* BeaconBroadcastAgent.m */,
+				EDBC4AB718BFF2290047C0EA /* RegionPopupViewController.h */,
+				EDBC4AB818BFF2290047C0EA /* RegionPopupViewController.m */,
 			);
 			path = HBeacon;
 			sourceTree = "<group>";
@@ -251,6 +259,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDBC4ABB18BFF3C20047C0EA /* lebonmarche.html in Resources */,
 				ED97FADD18B4053500558F21 /* Main_iPad.storyboard in Resources */,
 				ED97FAE518B4053500558F21 /* Images.xcassets in Resources */,
 				ED97FADA18B4053500558F21 /* Main_iPhone.storyboard in Resources */,
@@ -277,7 +286,8 @@
 				ED97FAD718B4053500558F21 /* AppDelegate.m in Sources */,
 				EDB1F1C818B6CAAD008F6511 /* BeaconReceiverAgent.m in Sources */,
 				ED97FAE018B4053500558F21 /* MainViewController.m in Sources */,
-				EDB1F1CB18B6D4EB008F6511 /* HBeacon.m in Sources */,
+				EDB1F1CB18B6D4EB008F6511 /* HBeaconRegion.m in Sources */,
+				EDBC4AB918BFF2290047C0EA /* RegionPopupViewController.m in Sources */,
 				EDB1F1CE18B6E3C3008F6511 /* BeaconBroadcastAgent.m in Sources */,
 				ED97FAD318B4053500558F21 /* main.m in Sources */,
 			);

@@ -8,7 +8,7 @@
 
 #import "BeaconReceiverAgent.h"
 
-#import "HBeacon.h"
+#import "HBeaconRegion.h"
 
 static BeaconReceiverAgent *_shareBA = nil;
 @implementation BeaconReceiverAgent {
@@ -65,16 +65,20 @@ static BeaconReceiverAgent *_shareBA = nil;
         // Tell location manager to start monitoring for all beacon region
         for (CLBeaconRegion *aReagion in dictBeaconToReceive.allValues) {
             [self.locationManager startMonitoringForRegion:aReagion];
+            [self.locationManager startRangingBeaconsInRegion:aReagion];
         }
         
         
-        NSLog(@"is Monitoring (waiting for 1 or some known beacon to be in range) ...");
+        [self.delegate newMessage:@"Searching for beacon region..."];
     } else {
         NSLog(@"disable receiver");
         // Tell location manager to stop monitoring for all beacon region
         for (CLBeaconRegion *aReagion in dictBeaconToReceive.allValues) {
-            [self.locationManager stopMonitoringForRegion:aReagion];
+            [self.locationManager stopRangingBeaconsInRegion:aReagion];
+            [self.locationManager stopMonitoringForRegion:aReagion];            
         }
+        
+        [self.delegate newMessage:@"Receiver disabled"];
     }
 }
 
@@ -94,80 +98,42 @@ static BeaconReceiverAgent *_shareBA = nil;
 
 
 -(void)locationManager:(CLLocationManager *)manager didRangeBeacons:(NSArray *)beacons inRegion:(CLBeaconRegion *)region {
-    NSLog(@"%s",__FUNCTION__);
-    NSLog(@"manager: %@",manager);
-    NSLog(@"beacon in range: %d",beacons.count);
-    NSLog(@"region: %@", region.identifier);
+//    NSLog(@"%s",__FUNCTION__);
+//    NSLog(@"manager: %@",manager);
+//    NSLog(@"beacon in range: %lu",(unsigned long)beacons.count);
+//    NSLog(@"region: %@", region.identifier);
     
-    CLBeacon *nearestBeacon = nil;
-    if (beacons && beacons.count > 0) {
-        NSMutableArray *immediateBeacons = [[NSMutableArray alloc] init];
-        NSMutableArray *nearBeacons = [[NSMutableArray alloc] init];
-        NSMutableArray *farBeacons = [[NSMutableArray alloc] init];
-        
-        for (CLBeacon *foundBeacon in beacons) {
-            if (foundBeacon.proximity == CLProximityImmediate) {
-                [immediateBeacons addObject:foundBeacon];
-            } else if (foundBeacon.proximity == CLProximityNear) {
-                [nearBeacons addObject:foundBeacon];
-            } else if (foundBeacon.proximity == CLProximityFar) {
-                [farBeacons addObject:foundBeacon];
-            }
-        }
-        
-        for (CLBeacon *aBeacon in immediateBeacons) {
-            if (nearestBeacon == nil) {
-                nearestBeacon = aBeacon;
-            } else if (aBeacon.accuracy < nearestBeacon.accuracy) {
-                nearestBeacon = aBeacon;
-            }
-        }
-        
-        if (nearestBeacon == nil) {
-            for (CLBeacon *aBeacon in nearBeacons) {
-                if (nearestBeacon == nil) {
-                    nearestBeacon = aBeacon;
-                } else if (aBeacon.accuracy < nearestBeacon.accuracy) {
-                    nearestBeacon = aBeacon;
-                }
-            }
-            
-            if (nearestBeacon == nil) {
-                for (CLBeacon *aBeacon in farBeacons) {
-                    if (nearestBeacon == nil) {
-                        nearestBeacon = aBeacon;
-                    } else if (aBeacon.accuracy < nearestBeacon.accuracy) {
-                        nearestBeacon = aBeacon;
-                    }
-                }
-                
-                if (nearestBeacon) {
-                    NSLog(@"found nearest beacon in far list");
-                }
-            } else {
-                NSLog(@"found nearest beacon in near list");
-            }
+    @synchronized(self) {
+        HBeaconRegion *foundRegion = [self searchBeaconRegion:region.identifier withMajor:region.major andMinor:region.minor];
+        if (foundRegion == nil) {
+            NSLog(@"Warning: this region must be tracked before??");
+            foundRegion = [[HBeaconRegion alloc] init];
+            foundRegion.beaconReagion = region;
+            [_listBeaconInRange addObject:foundRegion];
         } else {
-            NSLog(@"found nearest beacon in immediate list");
+            foundRegion.beaconsInRegion = beacons; //update
+        }
+        
+        if (beacons == nil || beacons.count == 0) {
+            [_listBeaconInRange removeObject:foundRegion];
         }
     }
     
-    if (nearestBeacon == nil) {
-        NSLog(@"take first beacon in list");
-        nearestBeacon = [beacons firstObject];
+    //notify beacon updated
+    if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
+        [self.delegate beaconsUpdated];
     }
-    
-    if (nearestBeacon) {
-        // You can retrieve the beacon data from its properties
-        NSString *uuid = nearestBeacon.proximityUUID.UUIDString;
-        NSString *major = [NSString stringWithFormat:@"%@", nearestBeacon.major];
-        NSString *minor = [NSString stringWithFormat:@"%@", nearestBeacon.minor];
-        NSString *accuracy = [NSString stringWithFormat:@"%0.2f", nearestBeacon.accuracy];
-        NSString *rssi = [NSString stringWithFormat:@"%ld", (long)nearestBeacon.rssi];
-        NSString *identifier = region.identifier;
-        
-        NSLog(@"%@ - %@ - %@ - %@ m - %@ - %@", identifier, major, minor, accuracy, rssi, uuid);
-    }
+//    if (nearestBeacon) {
+//        // You can retrieve the beacon data from its properties
+//        NSString *uuid = nearestBeacon.proximityUUID.UUIDString;
+//        NSString *major = [NSString stringWithFormat:@"%@", nearestBeacon.major];
+//        NSString *minor = [NSString stringWithFormat:@"%@", nearestBeacon.minor];
+//        NSString *accuracy = [NSString stringWithFormat:@"%0.2f", nearestBeacon.accuracy];
+//        NSString *rssi = [NSString stringWithFormat:@"%ld", (long)nearestBeacon.rssi];
+//        NSString *identifier = region.identifier;
+//        
+//        NSLog(@"%@ - %@ - %@ - %@ m - %@ - %@", identifier, major, minor, accuracy, rssi, uuid);
+//    }
 }
 
 //check if we can monitoring or not
@@ -194,7 +160,7 @@ static BeaconReceiverAgent *_shareBA = nil;
     if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized) {
         if (canReceive) {
             if (self.delegate && [self.delegate respondsToSelector:@selector(newMessage:)]) {
-                [self.delegate newMessage:@"Cannot search for beacon. Location services are not enabled"];
+                [self.delegate newMessage:@"Cannot search for beacon. Location services are not authorized"];
             }
         }
         
@@ -207,7 +173,9 @@ static BeaconReceiverAgent *_shareBA = nil;
         
         return;
     }
+    
     if (canReceive) {
+        [self.delegate newMessage:@"Searching for beacon region..."];
         isReceiving = YES;
     }
 }
@@ -221,13 +189,23 @@ static BeaconReceiverAgent *_shareBA = nil;
         if (regionEntered) {
             [self.locationManager startRangingBeaconsInRegion:(CLBeaconRegion*)regionEntered];
         }
-    }
+        
+        @synchronized(self) {
+            HBeaconRegion *foundBeacon = [self searchBeaconRegion:regionEntered.identifier withMajor:regionEntered.major andMinor:regionEntered.minor];
+            
+            if (foundBeacon == nil) {
+                foundBeacon = [[HBeaconRegion alloc] init];
+                foundBeacon.beaconReagion = regionEntered;
+                [_listBeaconInRange addObject:foundBeacon];
+            }
+        }
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
+            [self.delegate beaconsUpdated];
+        }
 
-    [_listBeaconInRange addObject:region];
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
-        [self.delegate beaconsUpdated];
     }
+    
     
     [self sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region];
 }
@@ -235,14 +213,10 @@ static BeaconReceiverAgent *_shareBA = nil;
 -(void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     NSLog(@"%s",__FUNCTION__);
     if (canReceive) {
-        //stop ranging
-        CLBeaconRegion *regionExited = [dictBeaconToReceive objectForKey:((CLBeaconRegion*)region).proximityUUID.UUIDString];
-        if (regionExited) {
-            [self.locationManager stopRangingBeaconsInRegion:(CLBeaconRegion*)regionExited];
-        }
+        [self removeBeaconRegion:region];
+        
+        [self sendExitLocalNotificationForBeaconRegion:(CLBeaconRegion *)region];
     }
-    
-    [_listBeaconInRange removeObject:region];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
         [self.delegate beaconsUpdated];
@@ -289,7 +263,13 @@ static BeaconReceiverAgent *_shareBA = nil;
 
 -(void)locationManager:(CLLocationManager *)manager rangingBeaconsDidFailForRegion:(CLBeaconRegion *)region withError:(NSError *)error {
     NSLog(@"%s: error: %@",__FUNCTION__,error.localizedDescription);
-    [self doesNotRecognizeSelector:_cmd];
+    //remove from beacon
+    [self removeBeaconRegion:region];
+    
+    //then update
+    if (self.delegate && [self.delegate respondsToSelector:@selector(beaconsUpdated)]) {
+        [self.delegate beaconsUpdated];
+    }
 }
 
 -(void)locationManagerDidPauseLocationUpdates:(CLLocationManager *)manager {
@@ -317,7 +297,20 @@ static BeaconReceiverAgent *_shareBA = nil;
     UILocalNotification *notification = [UILocalNotification new];
     
     // Notification details
-    notification.alertBody = [NSString stringWithFormat:@"Entered beacon region for identifier: %@",
+    notification.alertBody = [NSString stringWithFormat:@"Welcome to: %@",
+                              region.identifier];   // Major and minor are not available at the monitoring stage
+    notification.alertAction = NSLocalizedString(@"View Details", nil);
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    
+    [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+}
+
+- (void)sendExitLocalNotificationForBeaconRegion:(CLBeaconRegion *)region
+{
+    UILocalNotification *notification = [UILocalNotification new];
+    
+    // Notification details
+    notification.alertBody = [NSString stringWithFormat:@"Bye. See you again in %@",
                               region.identifier];   // Major and minor are not available at the monitoring stage
     notification.alertAction = NSLocalizedString(@"View Details", nil);
     notification.soundName = UILocalNotificationDefaultSoundName;
@@ -344,13 +337,16 @@ static BeaconReceiverAgent *_shareBA = nil;
     
     NSString *broadCastUUID1 = @"A77A1B68-49A7-4DBF-914C-760D07FBB87B";
     CLBeaconRegion *myBeaconRegion1 = [[CLBeaconRegion alloc] initWithProximityUUID:[[NSUUID alloc] initWithUUIDString:broadCastUUID1] identifier:@"com.hbeacon.test1"];
+    myBeaconRegion1.notifyEntryStateOnDisplay = YES;
+
     NSString *broadCastUUID2 = @"054fe7b1-a48f-41ae-8b92-0c151863236c";
     CLBeaconRegion *myBeaconRegion2 = [[CLBeaconRegion alloc] initWithProximityUUID:[[NSUUID alloc] initWithUUIDString:broadCastUUID2] identifier:@"com.hbeacon.test2"];
+    myBeaconRegion2.notifyEntryStateOnDisplay = YES;
     
     //add to dict
     dictBeaconToReceive = [[NSMutableDictionary alloc] init];
     [dictBeaconToReceive setObject:myBeaconRegion1 forKey:broadCastUUID1];
-    [dictBeaconToReceive setObject:myBeaconRegion2 forKey:broadCastUUID2];
+//    [dictBeaconToReceive setObject:myBeaconRegion2 forKey:broadCastUUID2];
 }
 
 -(void)createLocationManager {
@@ -368,8 +364,30 @@ static BeaconReceiverAgent *_shareBA = nil;
 
 
 #pragma mark Beacon Manager
--(HBeacon*)searchBeacon:(NSString*)identifier withMajor:(NSNumber*)beaconMajor andMinor:(NSNumber*)beaconMinor {
-    for (HBeacon *aBeacon in _listBeaconInRange) {
+-(void)removeBeaconRegion:(CLRegion*)region {
+    //stop ranging
+    CLBeaconRegion *regionExited = [dictBeaconToReceive objectForKey:((CLBeaconRegion*)region).proximityUUID.UUIDString];
+    if (regionExited) {
+        [self.locationManager stopRangingBeaconsInRegion:(CLBeaconRegion*)regionExited];
+    }
+    
+    @synchronized(self) {
+        HBeaconRegion *foundBeacon = [self searchBeaconRegion:regionExited.identifier withMajor:regionExited.major andMinor:regionExited.minor];
+        
+        if (foundBeacon == nil) {
+            NSLog(@"this region is already existed");
+        } else {
+            [_listBeaconInRange removeObject:foundBeacon];
+        }
+    }
+}
+
+
+-(HBeaconRegion*)searchBeaconRegion:(NSString*)identifier withMajor:(NSNumber*)beaconMajor andMinor:(NSNumber*)beaconMinor {
+    
+    for (HBeaconRegion *aBeacon in _listBeaconInRange) {
+        CLBeaconRegion *myRegion = aBeacon.beaconReagion;
+        
         if ([aBeacon.beaconReagion.identifier isEqualToString:identifier]
             && aBeacon.beaconReagion.major.intValue == beaconMajor.intValue
             && aBeacon.beaconReagion.minor.intValue == beaconMinor.intValue

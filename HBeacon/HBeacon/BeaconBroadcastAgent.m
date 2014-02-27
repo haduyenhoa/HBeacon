@@ -57,7 +57,7 @@ static BeaconBroadcastAgent *_shareBBA = nil;
         int broadCastMajor = 1;
         
         
-        int broadcastIdx = 2;
+        int broadcastIdx = 1;
         
         if (broadcastIdx == 1) {
             broadCastUUID = @"A77A1B68-49A7-4DBF-914C-760D07FBB87B";
@@ -101,7 +101,13 @@ static BeaconBroadcastAgent *_shareBBA = nil;
 -(void)enableBroadcast:(BOOL)value {
     if (value) {
         if (self.myBTManager) {
-            NSLog(@"is already broadcasting.");
+            self.myBTManager.delegate = self;
+            if (self.myBTManager.state == CBPeripheralManagerStatePoweredOn) {
+                NSLog(@"Re-broadcasting now");
+                [self.myBTManager startAdvertising:_broadcastBeaconDict];
+            } else {
+                NSLog(@"Cannot re-broadcasting");
+            }
             return;
         }
         
@@ -109,6 +115,7 @@ static BeaconBroadcastAgent *_shareBBA = nil;
         
         //start broadcasting
         self.myBTManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+        
     } else {
         NSLog(@"disable broadcast");
         if (self.myBTManager) {
