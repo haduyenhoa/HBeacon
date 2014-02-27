@@ -7,7 +7,19 @@
 //
 
 #import <Foundation/Foundation.h>
+@import CoreLocation;
+@import CoreBluetooth;
 
-@interface BeaconBroadcastAgent : NSObject
+@interface BeaconBroadcastAgent : NSObject <
+//CLLocationManagerDelegate,
+CBPeripheralManagerDelegate>
+
+@property (nonatomic, strong) CBPeripheralManager *myBTManager;
+//@property (nonatomic) CLLocationManager *locationManager;
+
++(BeaconBroadcastAgent*)shareBBA;
+
+-(void)enableBroadcast:(BOOL)value;
+
 
 @end

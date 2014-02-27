@@ -19,19 +19,20 @@
 
 @end
 
-@interface BeaconAgent : NSObject <CLLocationManagerDelegate,CBPeripheralManagerDelegate>
+@interface BeaconReceiverAgent : NSObject <CLLocationManagerDelegate
+//,CBPeripheralManagerDelegate
+>
 
-+(BeaconAgent*) shareBA;
++(BeaconReceiverAgent*) shareBA;
 
 @property (nonatomic) id<BeaconAgentDelegate> delegate;
-@property (nonatomic) CBPeripheralManager *myBTManager;
-@property (nonatomic) CLLocationManager *locationManager;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 -(NSArray*)getListBeaconInRange;
 -(NSArray*)getLastVisitedBeacons;
 
 
--(void)enableBroadcast:(BOOL)value;
+
 -(void)enableReceiver:(BOOL)value;
 
 

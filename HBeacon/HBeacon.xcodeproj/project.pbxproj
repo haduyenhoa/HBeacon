@@ -23,7 +23,7 @@
 		ED97FAEE18B4053500558F21 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED97FACA18B4053500558F21 /* UIKit.framework */; };
 		ED97FAF618B4053500558F21 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ED97FAF418B4053500558F21 /* InfoPlist.strings */; };
 		ED97FAF818B4053500558F21 /* HBeaconTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ED97FAF718B4053500558F21 /* HBeaconTests.m */; };
-		EDB1F1C818B6CAAD008F6511 /* BeaconAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1C718B6CAAD008F6511 /* BeaconAgent.m */; };
+		EDB1F1C818B6CAAD008F6511 /* BeaconReceiverAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1C718B6CAAD008F6511 /* BeaconReceiverAgent.m */; };
 		EDB1F1CB18B6D4EB008F6511 /* HBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1CA18B6D4EB008F6511 /* HBeacon.m */; };
 		EDB1F1CE18B6E3C3008F6511 /* BeaconBroadcastAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB1F1CD18B6E3C3008F6511 /* BeaconBroadcastAgent.m */; };
 /* End PBXBuildFile section */
@@ -61,8 +61,8 @@
 		ED97FAF318B4053500558F21 /* HBeaconTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HBeaconTests-Info.plist"; sourceTree = "<group>"; };
 		ED97FAF518B4053500558F21 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		ED97FAF718B4053500558F21 /* HBeaconTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HBeaconTests.m; sourceTree = "<group>"; };
-		EDB1F1C618B6CAAD008F6511 /* BeaconAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeaconAgent.h; sourceTree = "<group>"; };
-		EDB1F1C718B6CAAD008F6511 /* BeaconAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeaconAgent.m; sourceTree = "<group>"; };
+		EDB1F1C618B6CAAD008F6511 /* BeaconReceiverAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeaconReceiverAgent.h; sourceTree = "<group>"; };
+		EDB1F1C718B6CAAD008F6511 /* BeaconReceiverAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeaconReceiverAgent.m; sourceTree = "<group>"; };
 		EDB1F1C918B6D4EB008F6511 /* HBeacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBeacon.h; sourceTree = "<group>"; };
 		EDB1F1CA18B6D4EB008F6511 /* HBeacon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBeacon.m; sourceTree = "<group>"; };
 		EDB1F1CC18B6E3C3008F6511 /* BeaconBroadcastAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeaconBroadcastAgent.h; sourceTree = "<group>"; };
@@ -134,8 +134,8 @@
 				ED97FADF18B4053500558F21 /* MainViewController.m */,
 				ED97FAE118B4053500558F21 /* ManagerViewController.h */,
 				ED97FAE218B4053500558F21 /* ManagerViewController.m */,
-				EDB1F1C618B6CAAD008F6511 /* BeaconAgent.h */,
-				EDB1F1C718B6CAAD008F6511 /* BeaconAgent.m */,
+				EDB1F1C618B6CAAD008F6511 /* BeaconReceiverAgent.h */,
+				EDB1F1C718B6CAAD008F6511 /* BeaconReceiverAgent.m */,
 				EDB1F1C918B6D4EB008F6511 /* HBeacon.h */,
 				EDB1F1CA18B6D4EB008F6511 /* HBeacon.m */,
 				ED97FAE418B4053500558F21 /* Images.xcassets */,
@@ -275,7 +275,7 @@
 			files = (
 				ED97FAE318B4053500558F21 /* ManagerViewController.m in Sources */,
 				ED97FAD718B4053500558F21 /* AppDelegate.m in Sources */,
-				EDB1F1C818B6CAAD008F6511 /* BeaconAgent.m in Sources */,
+				EDB1F1C818B6CAAD008F6511 /* BeaconReceiverAgent.m in Sources */,
 				ED97FAE018B4053500558F21 /* MainViewController.m in Sources */,
 				EDB1F1CB18B6D4EB008F6511 /* HBeacon.m in Sources */,
 				EDB1F1CE18B6E3C3008F6511 /* BeaconBroadcastAgent.m in Sources */,
