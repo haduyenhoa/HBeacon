@@ -386,8 +386,6 @@ static BeaconReceiverAgent *_shareBA = nil;
 -(HBeaconRegion*)searchBeaconRegion:(NSString*)identifier withMajor:(NSNumber*)beaconMajor andMinor:(NSNumber*)beaconMinor {
     
     for (HBeaconRegion *aBeacon in _listBeaconInRange) {
-        CLBeaconRegion *myRegion = aBeacon.beaconReagion;
-        
         if ([aBeacon.beaconReagion.identifier isEqualToString:identifier]
             && aBeacon.beaconReagion.major.intValue == beaconMajor.intValue
             && aBeacon.beaconReagion.minor.intValue == beaconMinor.intValue

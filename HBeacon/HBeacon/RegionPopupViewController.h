@@ -15,8 +15,6 @@
 @property (nonatomic) IBOutlet UIWebView *wvAd;
 @property (nonatomic) IBOutlet UILabel *lblDistance;
 
--(IBAction)closeMe:(id)sender;
-
 -(void)setNearestBeacon:(CLBeacon *)nearestBeacon;
 
 @end
