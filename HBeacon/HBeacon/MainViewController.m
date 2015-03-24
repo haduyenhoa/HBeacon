@@ -36,6 +36,7 @@
                                                          bundle:nil];
     popUp = [storyboard instantiateViewControllerWithIdentifier:@"popUpId"];
     
+    
 }
 
 - (NSString *) stringToHex:(NSString *)str
