@@ -43,8 +43,11 @@ static BeaconReceiverAgent *_shareBA = nil;
         [self initBeaconDict]; //dict contains all beacon that this receiver can monitoring (searching)
     }
     
+    
+    
     return self;
 }
+
 
 
 -(void)enableReceiver:(BOOL)value {
